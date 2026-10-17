@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Declaração de Permanência – PodoSaúde</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="topo">
+  <img src="logo.png" alt="PodoSaúde">
+  <h1>Declaração de Permanência</h1>
+  <a class="voltar" href="index.html">← Início</a>
+</header>
+
+<div class="area">
+
+  <!-- ===== FORMULÁRIO ===== -->
+  <form class="formulario" id="form" onsubmit="return false">
+    <h2>Empresa</h2>
+    <details class="empresa">
+      <summary>Ver / alterar dados da empresa</summary>
+      <div class="campo">
+        <label for="empresa">Nome da empresa</label>
+        <input id="empresa" value="CLINICA PODOSAUDE PODOLOGIA">
+      </div>
+      <div class="campo">
+        <label for="cnpj">CNPJ</label>
+        <input id="cnpj" value="27.795.377/0001-30" inputmode="numeric" maxlength="18">
+      </div>
+      <div class="campo">
+        <label for="endereco">Endereço</label>
+        <input id="endereco" value="Rua Espanha, 639 – Centro – Cambé/PR">
+      </div>
+      <div class="campo">
+        <label for="cidade">Cidade (para a data do documento)</label>
+        <input id="cidade" value="Cambé">
+      </div>
+    </details>
+
+    <h2>Cliente</h2>
+    <div class="campo">
+      <label for="cliente">Nome do cliente</label>
+      <input id="cliente" placeholder="Ex.: Maria da Silva" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label for="cpf">CPF</label>
+      <input id="cpf" placeholder="000.000.000-00" inputmode="numeric" maxlength="14" autocomplete="off">
+    </div>
+
+    <h2>Permanência</h2>
+    <div class="campo">
+      <label for="data">Data em que esteve na clínica</label>
+      <input id="data" type="date">
+    </div>
+    <div class="linha-2">
+      <div class="campo">
+        <label for="entrada">Horário de entrada</label>
+        <input id="entrada" type="time">
+      </div>
+      <div class="campo">
+        <label for="saida">Horário de saída</label>
+        <input id="saida" type="time">
+      </div>
+    </div>
+    <div class="campo">
+      <label for="finalidade">Motivo da presença</label>
+      <input id="finalidade" value="atendimento podológico">
+    </div>
+    <div class="campo">
+      <label for="obs">Observações (opcional)</label>
+      <textarea id="obs" placeholder="Ex.: Retorno agendado para 30 dias"></textarea>
+    </div>
+
+    <h2>Assinatura (visto)</h2>
+    <div class="campo">
+      <canvas id="assin-canvas" class="assin-quadro" width="600" height="200"></canvas>
+      <div class="assin-acoes">
+        <button type="button" class="btn-mini" id="assin-limpar">Limpar</button>
+        <label class="btn-mini">Enviar imagem<input type="file" accept="image/*" id="assin-arquivo" hidden></label>
+      </div>
+      <div class="dica">Assine com o dedo ou o mouse. Fica salva neste aparelho.</div>
+    </div>
+
+    <div class="botoes">
+      <button type="button" class="btn btn-principal" id="imprimir">🖨️ Imprimir / Salvar PDF</button>
+      <button type="button" class="btn btn-secundario" id="novo">＋ Nova declaração</button>
+    </div>
+  </form>
+
+  <!-- ===== DOCUMENTO ===== -->
+  <section>
+    <p class="previa-titulo">Pré-visualização</p>
+    <article class="documento">
+      <div class="doc-cabecalho">
+        <img src="logo.png" alt="Logo">
+        <div class="doc-empresa">
+          <strong data-v="empresa"></strong>
+          <span>CNPJ: <span data-v="cnpj" style="display:inline"></span></span>
+          <span data-v="endereco"></span>
+        </div>
+      </div>
+
+      <div class="doc-titulo-linha" style="justify-content:center">
+        <h2 class="doc-titulo" style="text-align:center">DECLARAÇÃO DE PERMANÊNCIA</h2>
+      </div>
+
+      <p class="doc-texto">
+        Declaramos, para os devidos fins, que <b data-v="cliente"></b>, inscrito(a) no CPF sob o
+        nº <b data-v="cpf"></b>, esteve presente nas dependências da <b data-v="empresa"></b>,
+        inscrita no CNPJ sob o nº <span data-v="cnpj"></span>, situada à <span data-v="endereco"></span>,
+        no dia <b id="d-dia"></b>, no período das <b data-v="entrada"></b> às <b data-v="saida"></b>,
+        para <span data-v="finalidade"></span>.
+      </p>
+
+      <div class="doc-obs" id="d-obs-box"><strong>Observações</strong><span data-v="obs"></span></div>
+
+      <p class="doc-data"><span data-v="cidade"></span>, <span id="d-data"></span>.</p>
+
+      <div class="doc-assinatura">
+        <div class="assin-area"><img id="d-assinatura" alt=""></div>
+        <div class="traco"></div>
+        <strong data-v="empresa"></strong>
+        <span>CNPJ: <span data-v="cnpj" style="display:inline"></span></span>
+      </div>
+    </article>
+  </section>
+</div>
+
+<script>
+/* ---------- Funções de apoio ---------- */
+const $ = id => document.getElementById(id);
+const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+
+function mascaraCPF(v) {
+  v = v.replace(/\D/g, "").slice(0, 11);
+  return v.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+}
+function mascaraCNPJ(v) {
+  v = v.replace(/\D/g, "").slice(0, 14);
+  return v.replace(/^(\d{2})(\d)/, "$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+          .replace(/\.(\d{3})(\d)/, ".$1/$2").replace(/(\d{4})(\d)/, "$1-$2");
+}
+function dataExtenso(iso) {
+  if (!iso) return null;
+  const [a, m, d] = iso.split("-").map(Number);
+  return `${d} de ${MESES[m - 1]} de ${a}`;
+}
+function dataCurta(iso) {
+  if (!iso) return null;
+  const [a, m, d] = iso.split("-");
+  return `${d}/${m}/${a}`;
+}
+const hora = v => v ? v.replace(":", "h") : null;
+function hojeISO() {
+  const h = new Date();
+  return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, "0")}-${String(h.getDate()).padStart(2, "0")}`;
+}
+
+/* ---------- Atualiza a pré-visualização ---------- */
+function preencher(chave, texto, vazio = "_______________") {
+  document.querySelectorAll(`[data-v="${chave}"]`).forEach(el => {
+    el.textContent = texto || vazio;
+    el.classList.toggle("vazio", !texto);
+  });
+}
+function atualizar() {
+  ["empresa", "cnpj", "endereco", "cidade", "cliente", "cpf", "finalidade"].forEach(k => preencher(k, $(k).value.trim()));
+  preencher("entrada", hora($("entrada").value), "____h____");
+  preencher("saida", hora($("saida").value), "____h____");
+  const obs = $("obs").value.trim();
+  preencher("obs", obs, "");
+  $("d-obs-box").style.display = obs ? "" : "none";
+
+  const dia = $("d-dia");
+  dia.textContent = dataCurta($("data").value) || "____/____/______";
+  dia.classList.toggle("vazio", !$("data").value);
+  $("d-data").textContent = dataExtenso(hojeISO());
+}
+
+/* ---------- Eventos ---------- */
+$("cpf").addEventListener("input", e => e.target.value = mascaraCPF(e.target.value));
+$("cnpj").addEventListener("input", e => e.target.value = mascaraCNPJ(e.target.value));
+$("form").addEventListener("input", atualizar);
+
+$("imprimir").addEventListener("click", () => {
+  const titulo = document.title;
+  const nome = $("cliente").value.trim();
+  document.title = `Declaração de Permanência${nome ? " - " + nome : ""}`;
+  window.print();
+  setTimeout(() => document.title = titulo, 1000);
+});
+
+$("novo").addEventListener("click", () => {
+  ["cliente", "cpf", "entrada", "saida", "obs"].forEach(k => $(k).value = "");
+  $("data").value = hojeISO();
+  atualizar();
+  $("cliente").focus();
+});
+
+/* ---------- Início ---------- */
+$("data").value = hojeISO();
+atualizar();
+</script>
+<script src="assinatura.js"></script>
+</body>
+</html>

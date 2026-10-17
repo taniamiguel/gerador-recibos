@@ -1,0 +1,308 @@
+/* ===== Estilo compartilhado – Gerador PodoSaúde ===== */
+:root {
+  --azul: #38b6e6;
+  --azul-escuro: #1786b5;
+  --azul-claro: #e8f6fc;
+  --tinta: #1f2a33;
+  --suave: #64748b;
+  --linha: #dbe4eb;
+  --fundo: #f3f7fa;
+  --branco: #ffffff;
+  --raio: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--fundo);
+  color: var(--tinta);
+  line-height: 1.5;
+}
+
+/* ---------- Barra superior ---------- */
+.topo {
+  background: var(--branco);
+  border-bottom: 1px solid var(--linha);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.topo img { height: 44px; }
+.topo h1 { font-size: 1.1rem; margin: 0; font-weight: 600; }
+.topo a.voltar {
+  margin-left: auto;
+  color: var(--azul-escuro);
+  text-decoration: none;
+  font-size: .95rem;
+  white-space: nowrap;
+}
+.topo a.voltar:hover { text-decoration: underline; }
+
+/* ---------- Layout: formulário + pré-visualização ---------- */
+.area {
+  display: grid;
+  grid-template-columns: minmax(300px, 400px) 1fr;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1300px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.formulario {
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 20px;
+}
+.formulario h2 {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--azul-escuro);
+  margin: 18px 0 10px;
+}
+.formulario h2:first-child { margin-top: 0; }
+
+.campo { margin-bottom: 12px; }
+.campo label {
+  display: block;
+  font-size: .85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.campo input,
+.campo textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  background: var(--branco);
+  color: var(--tinta);
+}
+.campo textarea { resize: vertical; min-height: 70px; }
+.campo input:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px var(--azul-claro);
+}
+.dica { font-size: .8rem; color: var(--suave); margin-top: 3px; }
+
+.linha-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+details.empresa summary {
+  cursor: pointer;
+  font-size: .9rem;
+  color: var(--azul-escuro);
+  margin-bottom: 10px;
+}
+
+/* ---------- Botões ---------- */
+.botoes { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.btn {
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+.btn-principal { background: var(--azul-escuro); color: var(--branco); }
+.btn-principal:hover { background: #12729b; }
+.btn-secundario { background: var(--branco); color: var(--azul-escuro); border-color: var(--azul); }
+.btn-secundario:hover { background: var(--azul-claro); }
+
+/* ---------- Documento (pré-visualização / impressão) ---------- */
+.previa-titulo {
+  font-size: .8rem;
+  color: var(--suave);
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.documento {
+  background: var(--branco);
+  width: 100%;
+  max-width: 210mm;
+  min-height: 250mm;
+  margin: 0 auto;
+  padding: 18mm 18mm 16mm;
+  box-shadow: 0 4px 24px rgba(20, 60, 90, .10);
+  border-radius: 4px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 12pt;
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 14px;
+  border-bottom: 3px solid var(--azul);
+}
+.doc-cabecalho img { width: 92px; height: auto; }
+.doc-empresa { font-family: "Segoe UI", Roboto, Arial, sans-serif; }
+.doc-empresa strong { display: block; font-size: 13pt; letter-spacing: .02em; }
+.doc-empresa span { display: block; font-size: 9.5pt; color: var(--suave); }
+
+.doc-titulo-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 26px 0 22px;
+  flex-wrap: wrap;
+}
+.doc-titulo {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 20pt;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--azul-escuro);
+  margin: 0;
+}
+.doc-titulo small { font-size: 12pt; letter-spacing: .04em; color: var(--tinta); font-weight: 600; }
+.doc-valor {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  border: 2px solid var(--azul);
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 15pt;
+  font-weight: 700;
+}
+
+.doc-texto { text-align: justify; line-height: 1.9; margin: 0 0 16px; }
+.doc-texto b { font-weight: 700; }
+.vazio { color: #9aa8b5; font-weight: 400 !important; }
+
+.doc-obs {
+  border-left: 3px solid var(--azul);
+  background: var(--azul-claro);
+  padding: 10px 14px;
+  margin: 8px 0 16px;
+  font-size: 11pt;
+  white-space: pre-wrap;
+}
+.doc-obs strong { font-family: "Segoe UI", Roboto, Arial, sans-serif; font-size: 9.5pt; text-transform: uppercase; letter-spacing: .06em; display: block; }
+
+.doc-data { text-align: right; margin: 26px 0 0; }
+
+.doc-assinatura {
+  margin-top: auto;
+  padding-top: 20px;
+  text-align: center;
+}
+.assin-area {
+  height: 70px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.assin-area img { max-height: 70px; max-width: 260px; margin-bottom: -6px; }
+
+/* Quadro para desenhar a assinatura */
+.assin-quadro {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 1;
+  border: 1px dashed #9fb3c3;
+  border-radius: 8px;
+  background: #fff;
+  touch-action: none;
+  cursor: crosshair;
+}
+.assin-acoes { display: flex; gap: 8px; margin-top: 8px; }
+.btn-mini {
+  font: inherit;
+  font-size: .85rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--linha);
+  background: var(--branco);
+  color: var(--azul-escuro);
+  cursor: pointer;
+}
+.btn-mini:hover { border-color: var(--azul); background: var(--azul-claro); }
+.doc-assinatura .traco { width: 70%; max-width: 360px; margin: 0 auto 6px; border-top: 1px solid var(--tinta); }
+.doc-assinatura strong { display: block; font-size: 11pt; }
+.doc-assinatura span { display: block; font-size: 10pt; color: var(--suave); }
+
+/* ---------- Página inicial ---------- */
+.inicio {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+}
+.inicio img { width: 150px; }
+.inicio h1 { font-size: 1.5rem; margin: 10px 0 4px; }
+.inicio p { color: var(--suave); margin: 0 0 30px; }
+.cartoes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.cartao {
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 26px 18px;
+  text-decoration: none;
+  color: var(--tinta);
+  transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+.cartao:hover { border-color: var(--azul); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(20, 60, 90, .08); }
+.cartao .icone { font-size: 2rem; }
+.cartao strong { display: block; font-size: 1.1rem; margin: 8px 0 4px; color: var(--azul-escuro); }
+.cartao span { font-size: .9rem; color: var(--suave); }
+
+/* ---------- Celular ---------- */
+@media (max-width: 900px) {
+  .area { grid-template-columns: 1fr; padding: 14px; gap: 16px; }
+  .documento { padding: 22px 18px; min-height: 0; font-size: 11pt; }
+  .doc-cabecalho img { width: 64px; }
+  .doc-titulo { font-size: 16pt; }
+  .doc-valor { font-size: 13pt; }
+
+}
+@media (max-width: 520px) {
+  .cartoes { grid-template-columns: 1fr; }
+  .topo h1 { font-size: .95rem; }
+  .topo img { height: 36px; }
+  .linha-2 { grid-template-columns: 1fr; gap: 0; }
+}
+
+/* ---------- Impressão / PDF: só o documento ---------- */
+@page { size: A4; margin: 0; }
+@media print {
+  body { background: #fff; }
+  .topo, .formulario, .previa-titulo { display: none !important; }
+  .area { display: block; padding: 0; margin: 0; max-width: none; }
+  .documento {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: none;
+    width: 210mm;
+    height: 296mm;
+    min-height: 0;
+    padding: 18mm 18mm 16mm;
+    font-size: 12pt;
+    overflow: hidden;
+  }
+  .doc-cabecalho img { width: 92px; }
+  .doc-titulo { font-size: 20pt; }
+  .doc-valor { font-size: 15pt; }
+
+  .vazio { color: transparent; border-bottom: 1px solid #999; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

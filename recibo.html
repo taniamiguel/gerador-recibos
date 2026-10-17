@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recibo – PodoSaúde</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="topo">
+  <img src="logo.png" alt="PodoSaúde">
+  <h1>Gerador de Recibo</h1>
+  <a class="voltar" href="index.html">← Início</a>
+</header>
+
+<div class="area">
+
+  <!-- ===== FORMULÁRIO ===== -->
+  <form class="formulario" id="form" onsubmit="return false">
+    <h2>Recibo</h2>
+    <div class="linha-2">
+      <div class="campo">
+        <label for="numero">Nº do recibo</label>
+        <input id="numero" type="number" min="1" inputmode="numeric">
+      </div>
+      <div class="campo">
+        <label for="data">Data</label>
+        <input id="data" type="date">
+      </div>
+    </div>
+
+    <h2>Empresa</h2>
+    <details class="empresa">
+      <summary>Ver / alterar dados da empresa</summary>
+      <div class="campo">
+        <label for="empresa">Nome da empresa</label>
+        <input id="empresa" value="CLINICA PODOSAUDE PODOLOGIA">
+      </div>
+      <div class="campo">
+        <label for="cnpj">CNPJ</label>
+        <input id="cnpj" value="27.795.377/0001-30" inputmode="numeric" maxlength="18">
+      </div>
+      <div class="campo">
+        <label for="endereco">Endereço</label>
+        <input id="endereco" value="Rua Espanha, 639 – Centro – Cambé/PR">
+      </div>
+      <div class="campo">
+        <label for="cidade">Cidade (para a data do documento)</label>
+        <input id="cidade" value="Cambé">
+      </div>
+    </details>
+
+    <h2>Cliente</h2>
+    <div class="campo">
+      <label for="cliente">Nome do cliente</label>
+      <input id="cliente" placeholder="Ex.: Maria da Silva" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label for="cpf">CPF</label>
+      <input id="cpf" placeholder="000.000.000-00" inputmode="numeric" maxlength="14" autocomplete="off">
+    </div>
+
+    <h2>Pagamento</h2>
+    <div class="campo">
+      <label for="servico">Produto ou serviço</label>
+      <input id="servico" placeholder="Ex.: Sessão de podologia" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label for="valor">Valor total (R$)</label>
+      <input id="valor" placeholder="0,00" inputmode="numeric" autocomplete="off">
+      <div class="dica">Digite só os números. Ex.: 15000 = 150,00</div>
+    </div>
+    <div class="campo">
+      <label for="obs">Observações (opcional)</label>
+      <textarea id="obs" placeholder="Ex.: Pagamento via PIX"></textarea>
+    </div>
+
+    <h2>Assinatura (visto)</h2>
+    <div class="campo">
+      <canvas id="assin-canvas" class="assin-quadro" width="600" height="200"></canvas>
+      <div class="assin-acoes">
+        <button type="button" class="btn-mini" id="assin-limpar">Limpar</button>
+        <label class="btn-mini">Enviar imagem<input type="file" accept="image/*" id="assin-arquivo" hidden></label>
+      </div>
+      <div class="dica">Assine com o dedo ou o mouse. Fica salva neste aparelho.</div>
+    </div>
+
+    <div class="botoes">
+      <button type="button" class="btn btn-principal" id="imprimir">🖨️ Imprimir / Salvar PDF</button>
+      <button type="button" class="btn btn-secundario" id="novo">＋ Novo recibo</button>
+    </div>
+  </form>
+
+  <!-- ===== DOCUMENTO ===== -->
+  <section>
+    <p class="previa-titulo">Pré-visualização</p>
+    <article class="documento">
+      <div class="doc-cabecalho">
+        <img src="logo.png" alt="Logo">
+        <div class="doc-empresa">
+          <strong data-v="empresa"></strong>
+          <span>CNPJ: <span data-v="cnpj" style="display:inline"></span></span>
+          <span data-v="endereco"></span>
+        </div>
+      </div>
+
+      <div class="doc-titulo-linha">
+        <h2 class="doc-titulo">RECIBO <small>Nº <span id="d-numero"></span></small></h2>
+        <div class="doc-valor">R$ <span id="d-valor"></span></div>
+      </div>
+
+      <p class="doc-texto">
+        Recebemos de <b data-v="cliente"></b>, inscrito(a) no CPF sob o nº <b data-v="cpf"></b>,
+        a importância de <b>R$ <span id="d-valor2"></span></b> (<span id="d-extenso"></span>),
+        referente a <b data-v="servico"></b>.
+      </p>
+      <p class="doc-texto">Para maior clareza, firmamos o presente recibo, dando plena e geral quitação do valor acima.</p>
+
+      <div class="doc-obs" id="d-obs-box"><strong>Observações</strong><span data-v="obs"></span></div>
+
+      <p class="doc-data"><span data-v="cidade"></span>, <span id="d-data"></span>.</p>
+
+      <div class="doc-assinatura">
+        <div class="assin-area"><img id="d-assinatura" alt=""></div>
+        <div class="traco"></div>
+        <strong data-v="empresa"></strong>
+        <span>CNPJ: <span data-v="cnpj" style="display:inline"></span></span>
+      </div>
+    </article>
+  </section>
+</div>
+
+<script>
+/* ---------- Funções de apoio ---------- */
+const $ = id => document.getElementById(id);
+const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+
+function mascaraCPF(v) {
+  v = v.replace(/\D/g, "").slice(0, 11);
+  return v.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+}
+function mascaraCNPJ(v) {
+  v = v.replace(/\D/g, "").slice(0, 14);
+  return v.replace(/^(\d{2})(\d)/, "$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+          .replace(/\.(\d{3})(\d)/, ".$1/$2").replace(/(\d{4})(\d)/, "$1-$2");
+}
+function centavos(v) { const d = v.replace(/\D/g, ""); return d ? parseInt(d, 10) : 0; }
+function formatarReais(c) {
+  return (c / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function dataExtenso(iso) {
+  if (!iso) return null;
+  const [a, m, d] = iso.split("-").map(Number);
+  return `${d} de ${MESES[m - 1]} de ${a}`;
+}
+function hojeISO() {
+  const h = new Date();
+  return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, "0")}-${String(h.getDate()).padStart(2, "0")}`;
+}
+
+/* ---------- Valor por extenso ---------- */
+const UN = ["","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze","treze","quatorze","quinze","dezesseis","dezessete","dezoito","dezenove"];
+const DEZ = ["","","vinte","trinta","quarenta","cinquenta","sessenta","setenta","oitenta","noventa"];
+const CEN = ["","cento","duzentos","trezentos","quatrocentos","quinhentos","seiscentos","setecentos","oitocentos","novecentos"];
+function ate999(n) {
+  if (n === 100) return "cem";
+  const c = Math.floor(n / 100), r = n % 100, p = [];
+  if (c) p.push(CEN[c]);
+  if (r) p.push(r < 20 ? UN[r] : DEZ[Math.floor(r / 10)] + (r % 10 ? " e " + UN[r % 10] : ""));
+  return p.join(" e ");
+}
+function inteiroExtenso(n) {
+  const grupos = [
+    [Math.floor(n / 1e6), x => x === 1 ? "um milhão" : ate999(x) + " milhões"],
+    [Math.floor(n / 1000) % 1000, x => x === 1 ? "mil" : ate999(x) + " mil"],
+    [n % 1000, ate999]
+  ].filter(g => g[0] > 0);
+  return grupos.map((g, i) => {
+    const txt = g[1](g[0]);
+    if (i === 0) return txt;
+    const ultimo = i === grupos.length - 1;
+    return (ultimo && (g[0] < 100 || g[0] % 100 === 0) ? " e " : " ") + txt;
+  }).join("");
+}
+function porExtenso(c) {
+  const r = Math.floor(c / 100), ct = c % 100;
+  let s = "";
+  if (r) s = inteiroExtenso(r) + (r === 1 ? " real" : (r % 1e6 === 0 ? " de reais" : " reais"));
+  if (ct) s += (s ? " e " : "") + ate999(ct) + (ct === 1 ? " centavo" : " centavos");
+  return s || "zero reais";
+}
+
+/* ---------- Numeração (fica salva neste navegador) ---------- */
+const CHAVE = "podosaude_ultimo_recibo";
+function ultimoNumero() { try { return parseInt(localStorage.getItem(CHAVE), 10) || 0; } catch (e) { return 0; } }
+function salvarNumero(n) { try { if (n > ultimoNumero()) localStorage.setItem(CHAVE, n); } catch (e) {} }
+const pad = n => String(n || 0).padStart(3, "0");
+
+/* ---------- Atualiza a pré-visualização ---------- */
+function preencher(chave, texto, vazio = "_______________") {
+  document.querySelectorAll(`[data-v="${chave}"]`).forEach(el => {
+    el.textContent = texto || vazio;
+    el.classList.toggle("vazio", !texto);
+  });
+}
+function atualizar() {
+  ["empresa", "cnpj", "endereco", "cidade", "cliente", "cpf", "servico"].forEach(k => preencher(k, $(k).value.trim()));
+  const obs = $("obs").value.trim();
+  preencher("obs", obs, "");
+  $("d-obs-box").style.display = obs ? "" : "none";
+
+  $("d-numero").textContent = pad($("numero").value);
+  const c = centavos($("valor").value);
+  $("d-valor").textContent = $("d-valor2").textContent = formatarReais(c);
+  $("d-extenso").textContent = porExtenso(c);
+  $("d-data").textContent = dataExtenso($("data").value) || "____ de __________ de ______";
+}
+
+/* ---------- Eventos ---------- */
+$("cpf").addEventListener("input", e => e.target.value = mascaraCPF(e.target.value));
+$("cnpj").addEventListener("input", e => e.target.value = mascaraCNPJ(e.target.value));
+$("valor").addEventListener("input", e => {
+  const c = centavos(e.target.value);
+  e.target.value = c ? formatarReais(c) : "";
+});
+$("form").addEventListener("input", atualizar);
+
+$("imprimir").addEventListener("click", () => {
+  salvarNumero(parseInt($("numero").value, 10) || 0);
+  const titulo = document.title;
+  const nome = $("cliente").value.trim();
+  document.title = `Recibo ${pad($("numero").value)}${nome ? " - " + nome : ""}`;
+  window.print();
+  setTimeout(() => document.title = titulo, 1000);
+});
+
+$("novo").addEventListener("click", () => {
+  ["cliente", "cpf", "servico", "valor", "obs"].forEach(k => $(k).value = "");
+  $("numero").value = ultimoNumero() + 1;
+  $("data").value = hojeISO();
+  atualizar();
+  $("cliente").focus();
+});
+
+/* ---------- Início ---------- */
+$("numero").value = ultimoNumero() + 1;
+$("data").value = hojeISO();
+atualizar();
+</script>
+<script src="assinatura.js"></script>
+</body>
+</html>
