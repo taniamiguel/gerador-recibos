@@ -225,7 +225,7 @@ details.empresa summary {
   touch-action: none;
   cursor: crosshair;
 }
-.assin-acoes { display: flex; gap: 8px; margin-top: 8px; }
+.assin-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .btn-mini {
   font: inherit;
   font-size: .85rem;
