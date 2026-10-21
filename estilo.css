@@ -2,13 +2,17 @@
 :root {
   --azul: #38b6e6;
   --azul-escuro: #1786b5;
+  --azul-mais-escuro: #12729b;
   --azul-claro: #e8f6fc;
   --tinta: #1f2a33;
   --suave: #64748b;
   --linha: #dbe4eb;
   --fundo: #f3f7fa;
+  --mesa: #e6edf3;
   --branco: #ffffff;
-  --raio: 12px;
+  --raio: 14px;
+  --sombra: 0 1px 2px rgba(20, 60, 90, .06), 0 4px 16px rgba(20, 60, 90, .06);
+  --sombra-forte: 0 2px 4px rgba(20, 60, 90, .06), 0 12px 32px rgba(20, 60, 90, .12);
 }
 
 * { box-sizing: border-box; }
@@ -16,16 +20,23 @@
 body {
   margin: 0;
   font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: var(--fundo);
+  background:
+    radial-gradient(1200px 400px at 50% -120px, var(--azul-claro), transparent),
+    var(--fundo);
+  background-repeat: no-repeat;
   color: var(--tinta);
   line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ---------- Barra superior ---------- */
 .topo {
-  background: var(--branco);
+  background: rgba(255, 255, 255, .85);
+  backdrop-filter: saturate(1.4) blur(10px);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid var(--linha);
-  padding: 10px 20px;
+  padding: 10px max(20px, calc((100% - 1300px) / 2 + 24px));
   display: flex;
   align-items: center;
   gap: 14px;
@@ -33,23 +44,36 @@ body {
   top: 0;
   z-index: 10;
 }
-.topo img { height: 44px; }
-.topo h1 { font-size: 1.1rem; margin: 0; font-weight: 600; }
+.topo img { height: 44px; width: auto; }
+.topo h1 {
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 600;
+  text-wrap: balance;
+  padding-left: 14px;
+  border-left: 1px solid var(--linha);
+}
 .topo a.voltar {
   margin-left: auto;
   color: var(--azul-escuro);
   text-decoration: none;
-  font-size: .95rem;
+  font-size: .9rem;
+  font-weight: 600;
   white-space: nowrap;
+  padding: 8px 14px;
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  background: var(--branco);
+  transition: background-color .15s, border-color .15s;
 }
-.topo a.voltar:hover { text-decoration: underline; }
+.topo a.voltar:hover { background: var(--azul-claro); border-color: var(--azul); }
 
 /* ---------- Layout: formulário + pré-visualização ---------- */
 .area {
   display: grid;
   grid-template-columns: minmax(300px, 400px) 1fr;
-  gap: 24px;
-  padding: 24px;
+  gap: 28px;
+  padding: 28px 24px 40px;
   max-width: 1300px;
   margin: 0 auto;
   align-items: start;
@@ -59,23 +83,36 @@ body {
   background: var(--branco);
   border: 1px solid var(--linha);
   border-radius: var(--raio);
-  padding: 20px;
+  box-shadow: var(--sombra);
+  padding: 22px 22px 0;
 }
 .formulario h2 {
-  font-size: .8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .78rem;
   text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: .09em;
   color: var(--azul-escuro);
-  margin: 18px 0 10px;
+  margin: 22px 0 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--linha);
 }
-.formulario h2:first-child { margin-top: 0; }
+.formulario h2::before {
+  content: "";
+  width: 4px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--azul);
+}
+.formulario h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 
-.campo { margin-bottom: 12px; }
+.campo { margin-bottom: 14px; }
 .campo label {
   display: block;
   font-size: .85rem;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 .campo input,
 .campo textarea {
@@ -84,53 +121,136 @@ body {
   font-size: 1rem;
   padding: 10px 12px;
   border: 1px solid var(--linha);
-  border-radius: 8px;
-  background: var(--branco);
+  border-radius: 10px;
+  background: #fbfdfe;
   color: var(--tinta);
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
 }
-.campo textarea { resize: vertical; min-height: 70px; }
+.campo input::placeholder,
+.campo textarea::placeholder { color: #94a3b1; }
+.campo input:hover,
+.campo textarea:hover { border-color: #b9c9d6; }
+.campo textarea { resize: vertical; min-height: 76px; }
 .campo input:focus,
 .campo textarea:focus {
   outline: none;
+  background: var(--branco);
   border-color: var(--azul);
-  box-shadow: 0 0 0 3px var(--azul-claro);
+  box-shadow: 0 0 0 3px rgba(56, 182, 230, .35);
 }
-.dica { font-size: .8rem; color: var(--suave); margin-top: 3px; }
+.dica { font-size: .8rem; color: var(--suave); margin-top: 4px; }
 
-.linha-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.linha-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+/* Dados da empresa: caixa que abre e fecha */
+details.empresa {
+  border: 1px solid var(--linha);
+  border-radius: 10px;
+  background: var(--fundo);
+  margin-bottom: 4px;
+}
 details.empresa summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   cursor: pointer;
+  list-style: none;
   font-size: .9rem;
+  font-weight: 600;
   color: var(--azul-escuro);
-  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
 }
+details.empresa summary::-webkit-details-marker { display: none; }
+details.empresa summary::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .2s;
+}
+details.empresa[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+details.empresa summary:hover { background: var(--azul-claro); }
+details.empresa[open] { background: var(--branco); }
+details.empresa[open] summary { border-bottom: 1px solid var(--linha); border-radius: 10px 10px 0 0; margin-bottom: 12px; }
+details.empresa .campo { padding: 0 14px; }
 
 /* ---------- Botões ---------- */
-.botoes { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+/* Contorno visível para quem navega pelo teclado */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--azul-escuro);
+  outline-offset: 2px;
+}
+a, button, summary { touch-action: manipulation; }
+
+/* Botões finais ficam sempre à vista no fim do formulário */
+.botoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 22px -22px 0;
+  padding: 16px 22px 20px;
+  position: sticky;
+  bottom: 0;
+  background: rgba(255, 255, 255, .94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid var(--linha);
+  border-radius: 0 0 var(--raio) var(--raio);
+}
 .btn {
   font: inherit;
   font-size: 1rem;
   font-weight: 600;
-  padding: 12px 16px;
+  padding: 13px 16px;
   border-radius: 10px;
   border: 1px solid transparent;
   cursor: pointer;
   text-align: center;
   text-decoration: none;
+  transition: background-color .15s, box-shadow .15s, transform .1s;
 }
-.btn-principal { background: var(--azul-escuro); color: var(--branco); }
-.btn-principal:hover { background: #12729b; }
+.btn:active { transform: translateY(1px); }
+.btn-principal {
+  background: var(--azul-escuro);
+  color: var(--branco);
+  box-shadow: 0 1px 2px rgba(18, 114, 155, .3), 0 4px 12px rgba(23, 134, 181, .25);
+}
+.btn-principal:hover { background: var(--azul-mais-escuro); }
 .btn-secundario { background: var(--branco); color: var(--azul-escuro); border-color: var(--azul); }
 .btn-secundario:hover { background: var(--azul-claro); }
 
 /* ---------- Documento (pré-visualização / impressão) ---------- */
+/* "Mesa" onde a folha fica apoiada na tela */
+.previa {
+  background: var(--mesa);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 18px 24px 28px;
+}
 .previa-titulo {
-  font-size: .8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .78rem;
+  font-weight: 600;
   color: var(--suave);
-  margin: 0 0 8px;
+  margin: 0 0 14px;
   text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: .09em;
+}
+.previa-titulo::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2fbf71;
+  box-shadow: 0 0 0 3px rgba(47, 191, 113, .2);
 }
 .documento {
   background: var(--branco);
@@ -139,7 +259,7 @@ details.empresa summary {
   min-height: 250mm;
   margin: 0 auto;
   padding: 18mm 18mm 16mm;
-  box-shadow: 0 4px 24px rgba(20, 60, 90, .10);
+  box-shadow: var(--sombra-forte);
   border-radius: 4px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 12pt;
@@ -158,6 +278,8 @@ details.empresa summary {
 .doc-empresa { font-family: "Segoe UI", Roboto, Arial, sans-serif; }
 .doc-empresa strong { display: block; font-size: 13pt; letter-spacing: .02em; }
 .doc-empresa span { display: block; font-size: 9.5pt; color: var(--suave); }
+.doc-empresa .em-linha,
+.doc-assinatura .em-linha { display: inline; }
 
 .doc-titulo-linha {
   display: flex;
@@ -167,6 +289,8 @@ details.empresa summary {
   margin: 26px 0 22px;
   flex-wrap: wrap;
 }
+.doc-titulo-linha.centro { justify-content: center; }
+.doc-titulo-linha.centro .doc-titulo { text-align: center; }
 .doc-titulo {
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 20pt;
@@ -175,7 +299,7 @@ details.empresa summary {
   color: var(--azul-escuro);
   margin: 0;
 }
-.doc-titulo small { font-size: 12pt; letter-spacing: .04em; color: var(--tinta); font-weight: 600; }
+.doc-titulo small { font-size: 12pt; letter-spacing: .04em; color: var(--tinta); font-weight: 600; font-variant-numeric: tabular-nums; }
 .doc-valor {
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   border: 2px solid var(--azul);
@@ -183,11 +307,12 @@ details.empresa summary {
   padding: 6px 16px;
   font-size: 15pt;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .doc-texto { text-align: justify; line-height: 1.9; margin: 0 0 16px; }
 .doc-texto b { font-weight: 700; }
-.vazio { color: #9aa8b5; font-weight: 400 !important; }
+.vazio { color: #7a8794; font-weight: 400 !important; }
 
 .doc-obs {
   border-left: 3px solid var(--azul);
@@ -219,8 +344,8 @@ details.empresa summary {
   display: block;
   width: 100%;
   aspect-ratio: 3 / 1;
-  border: 1px dashed #9fb3c3;
-  border-radius: 8px;
+  border: 1.5px dashed #9fb3c3;
+  border-radius: 10px;
   background: #fff;
   touch-action: none;
   cursor: crosshair;
@@ -229,46 +354,86 @@ details.empresa summary {
 .btn-mini {
   font: inherit;
   font-size: .85rem;
+  font-weight: 600;
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: 999px;
   border: 1px solid var(--linha);
   background: var(--branco);
   color: var(--azul-escuro);
   cursor: pointer;
+  transition: background-color .15s, border-color .15s;
 }
 .btn-mini:hover { border-color: var(--azul); background: var(--azul-claro); }
+/* Botões maiores para o dedo em telas de toque */
+@media (pointer: coarse) {
+  .btn-mini { min-height: 44px; padding: 8px 14px; }
+}
 .doc-assinatura .traco { width: 70%; max-width: 360px; margin: 0 auto 6px; border-top: 1px solid var(--tinta); }
 .doc-assinatura strong { display: block; font-size: 11pt; }
 .doc-assinatura span { display: block; font-size: 10pt; color: var(--suave); }
 
 /* ---------- Página inicial ---------- */
 .inicio {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 56px 20px 40px;
   text-align: center;
 }
-.inicio img { width: 150px; }
-.inicio h1 { font-size: 1.5rem; margin: 10px 0 4px; }
-.inicio p { color: var(--suave); margin: 0 0 30px; }
-.cartoes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.inicio img {
+  width: 132px;
+  height: auto;
+  padding: 10px;
+  background: var(--branco);
+  border-radius: 28px;
+  box-shadow: var(--sombra);
+}
+.inicio h1 { font-size: 1.9rem; letter-spacing: -.01em; margin: 22px 0 6px; text-wrap: balance; }
+.inicio p { color: var(--suave); font-size: 1.05rem; margin: 0 0 36px; }
+.cartoes { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; text-align: left; }
 .cartao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   background: var(--branco);
   border: 1px solid var(--linha);
   border-radius: var(--raio);
-  padding: 26px 18px;
+  box-shadow: var(--sombra);
+  padding: 24px 22px 22px;
   text-decoration: none;
   color: var(--tinta);
   transition: border-color .15s, transform .15s, box-shadow .15s;
 }
-.cartao:hover { border-color: var(--azul); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(20, 60, 90, .08); }
-.cartao .icone { font-size: 2rem; }
-.cartao strong { display: block; font-size: 1.1rem; margin: 8px 0 4px; color: var(--azul-escuro); }
+.cartao:hover { border-color: var(--azul); transform: translateY(-3px); box-shadow: var(--sombra-forte); }
+.cartao .icone {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  font-size: 1.6rem;
+  border-radius: 14px;
+  background: var(--azul-claro);
+}
+.cartao strong { display: block; font-size: 1.1rem; margin: 16px 0 4px; color: var(--azul-escuro); }
 .cartao span { font-size: .9rem; color: var(--suave); }
+.cartao .seta {
+  margin-top: 16px;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--azul-escuro);
+}
+.cartao .seta::after { content: "→"; display: inline-block; margin-left: 6px; transition: transform .15s; }
+.cartao:hover .seta::after { transform: translateX(4px); }
+
+/* Sem animação para quem pediu menos movimento no sistema */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+  .cartao:hover, .cartao:hover .seta::after, .btn:active { transform: none; }
+}
 
 /* ---------- Celular ---------- */
 @media (max-width: 900px) {
   .area { grid-template-columns: 1fr; padding: 14px; gap: 16px; }
+  .previa { padding: 14px 10px 18px; }
   .documento { padding: 22px 18px; min-height: 0; font-size: 11pt; }
   .doc-cabecalho img { width: 64px; }
   .doc-titulo { font-size: 16pt; }
@@ -277,8 +442,12 @@ details.empresa summary {
 }
 @media (max-width: 520px) {
   .cartoes { grid-template-columns: 1fr; }
-  .topo h1 { font-size: .95rem; }
+  .topo { padding: 8px 14px; gap: 10px; }
+  .topo h1 { font-size: .95rem; padding-left: 10px; }
   .topo img { height: 36px; }
+  .topo a.voltar { padding: 6px 12px; }
+  .inicio { padding-top: 36px; }
+  .inicio h1 { font-size: 1.5rem; }
   .linha-2 { grid-template-columns: 1fr; gap: 0; }
 }
 
@@ -288,6 +457,7 @@ details.empresa summary {
   body { background: #fff; }
   .topo, .formulario, .previa-titulo { display: none !important; }
   .area { display: block; padding: 0; margin: 0; max-width: none; }
+  .previa { background: none; border: 0; border-radius: 0; padding: 0; }
   .documento {
     box-shadow: none;
     border-radius: 0;

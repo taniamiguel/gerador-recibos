@@ -9,7 +9,7 @@
 <body>
 
 <header class="topo">
-  <img src="logo.png" alt="PodoSaúde">
+  <img src="logo.png" alt="PodoSaúde" width="305" height="293">
   <h1>Gerador de Recibo</h1>
   <a class="voltar" href="index.html">← Início</a>
 </header>
@@ -54,7 +54,7 @@
     <h2>Cliente</h2>
     <div class="campo">
       <label for="cliente">Nome do cliente</label>
-      <input id="cliente" placeholder="Ex.: Maria da Silva" autocomplete="off">
+      <input id="cliente" placeholder="Ex.: Maria da Silva…" autocomplete="off">
     </div>
     <div class="campo">
       <label for="cpf">CPF</label>
@@ -64,7 +64,7 @@
     <h2>Pagamento</h2>
     <div class="campo">
       <label for="servico">Produto ou serviço</label>
-      <input id="servico" placeholder="Ex.: Sessão de podologia" autocomplete="off">
+      <input id="servico" placeholder="Ex.: Sessão de podologia…" autocomplete="off">
     </div>
     <div class="campo">
       <label for="valor">Valor total (R$)</label>
@@ -73,35 +73,36 @@
     </div>
     <div class="campo">
       <label for="obs">Observações (opcional)</label>
-      <textarea id="obs" placeholder="Ex.: Pagamento via PIX"></textarea>
+      <textarea id="obs" placeholder="Ex.: Pagamento via PIX…"></textarea>
     </div>
 
     <h2>Assinatura (visto)</h2>
     <div class="campo">
-      <canvas id="assin-canvas" class="assin-quadro" width="600" height="200"></canvas>
+      <canvas id="assin-canvas" class="assin-quadro" width="600" height="200" role="img" aria-label="Quadro para desenhar a assinatura"></canvas>
       <div class="assin-acoes">
         <button type="button" class="btn-mini" id="assin-limpar">Limpar</button>
-        <label class="btn-mini">Enviar imagem<input type="file" accept="image/*" id="assin-arquivo" hidden></label>
+        <button type="button" class="btn-mini" id="assin-enviar">Enviar imagem</button>
+        <input type="file" accept="image/*" id="assin-arquivo" hidden>
         <button type="button" class="btn-mini" id="assin-baixar">Baixar imagem</button>
       </div>
-      <div class="dica" id="assin-dica">Assine com o dedo ou o mouse. Fica salva neste aparelho.</div>
+      <div class="dica" id="assin-dica" aria-live="polite">Assine com o dedo ou o mouse. Fica salva neste aparelho.</div>
     </div>
 
     <div class="botoes">
-      <button type="button" class="btn btn-principal" id="imprimir">🖨️ Imprimir / Salvar PDF</button>
-      <button type="button" class="btn btn-secundario" id="novo">＋ Novo recibo</button>
+      <button type="button" class="btn btn-principal" id="imprimir"><span aria-hidden="true">🖨️</span> Imprimir / Salvar PDF</button>
+      <button type="button" class="btn btn-secundario" id="novo"><span aria-hidden="true">＋</span> Novo recibo</button>
     </div>
   </form>
 
   <!-- ===== DOCUMENTO ===== -->
-  <section>
+  <section class="previa">
     <p class="previa-titulo">Pré-visualização</p>
     <article class="documento">
       <div class="doc-cabecalho">
-        <img src="logo.png" alt="Logo">
+        <img src="logo.png" alt="PodoSaúde" width="305" height="293">
         <div class="doc-empresa">
           <strong data-v="empresa"></strong>
-          <span>CNPJ: <span data-v="cnpj" style="display:inline"></span></span>
+          <span>CNPJ: <span data-v="cnpj" class="em-linha"></span></span>
           <span data-v="endereco"></span>
         </div>
       </div>
@@ -126,7 +127,7 @@
         <div class="assin-area"><img id="d-assinatura" alt=""></div>
         <div class="traco"></div>
         <strong data-v="empresa"></strong>
-        <span>CNPJ: <span data-v="cnpj" style="display:inline"></span></span>
+        <span>CNPJ: <span data-v="cnpj" class="em-linha"></span></span>
       </div>
     </article>
   </section>

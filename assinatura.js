@@ -111,6 +111,7 @@
   }
 
   /* Enviar foto/imagem da assinatura */
+  document.getElementById("assin-enviar").addEventListener("click", () => document.getElementById("assin-arquivo").click());
   document.getElementById("assin-arquivo").addEventListener("change", e => {
     const arq = e.target.files[0];
     if (!arq) return;
